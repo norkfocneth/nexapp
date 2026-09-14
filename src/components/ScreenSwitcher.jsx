@@ -10,7 +10,10 @@ export default function ScreenSwitcher({
   onToggleAutoTour,
 }) {
   const screens = [
-    { num: 1, name: '01 Splash / Welcome' },
+    { num: 1, name: '01 Welcome' },
+    { num: 1.1, name: '01.1 Global Traces' },
+    { num: 1.2, name: '01.2 Flow of Funds' },
+    { num: 1.3, name: '01.3 Bigger Picture' },
     { num: 2, name: '02 Home Dashboard' },
     { num: 3, name: '03 Investigate Scan' },
     { num: 4, name: '04 Analysing Pipeline' },
@@ -20,8 +23,10 @@ export default function ScreenSwitcher({
     { num: 8, name: '08 Transaction Flow' },
     { num: 9, name: '09 Address Details' },
     { num: 10, name: '10 Detected Patterns' },
-    { num: 11, name: '11 Network Graph' },
+    { num: 11, name: '11 Graph Analysis' },
     { num: 12, name: '12 AI Investigator' },
+    { num: 13, name: '13 Risk Alerts' },
+    { num: 14, name: '14 Forensic Tools' },
   ];
 
   return (

@@ -18,6 +18,8 @@ import Screen09_AddressDetails from './screens/Screen09_AddressDetails';
 import Screen10_Patterns from './screens/Screen10_Patterns';
 import Screen11_NetworkGraph from './screens/Screen11_NetworkGraph';
 import Screen12_AIInvestigator from './screens/Screen12_AIInvestigator';
+import Screen13_Alerts from './screens/Screen13_Alerts';
+import Screen14_Tools from './screens/Screen14_Tools';
 
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState(1);
@@ -30,7 +32,7 @@ export default function App() {
     let interval;
     if (isAutoTouring) {
       interval = setInterval(() => {
-        setCurrentScreen((prev) => (prev >= 12 ? 1 : prev + 1));
+        setCurrentScreen((prev) => (prev >= 14 ? 1 : prev + 1));
       }, 4500);
     }
     return () => clearInterval(interval);
@@ -44,7 +46,13 @@ export default function App() {
   const renderScreenContent = (screenNum) => {
     switch (screenNum) {
       case 1:
-        return <Screen01_Splash onNavigate={setCurrentScreen} />;
+        return <Screen01_Splash onNavigate={setCurrentScreen} initialStep={0} />;
+      case 1.1:
+        return <Screen01_Splash onNavigate={setCurrentScreen} initialStep={1} />;
+      case 1.2:
+        return <Screen01_Splash onNavigate={setCurrentScreen} initialStep={2} />;
+      case 1.3:
+        return <Screen01_Splash onNavigate={setCurrentScreen} initialStep={3} />;
       case 2:
         return <Screen02_Home onNavigate={setCurrentScreen} />;
       case 3:
@@ -72,15 +80,22 @@ export default function App() {
         return <Screen11_NetworkGraph onNavigate={setCurrentScreen} />;
       case 12:
         return <Screen12_AIInvestigator onNavigate={setCurrentScreen} />;
+      case 13:
+        return <Screen13_Alerts onNavigate={setCurrentScreen} />;
+      case 14:
+        return <Screen14_Tools onNavigate={setCurrentScreen} />;
       default:
-        return <Screen01_Splash onNavigate={setCurrentScreen} />;
+        return <Screen01_Splash onNavigate={setCurrentScreen} initialStep={0} />;
     }
   };
 
   const screenMetadata = [
-    { num: 1, title: 'Welcome / Splash', subtitle: '3D Holographic Model & Brand' },
+    { num: 1, title: 'Welcome / Launch', subtitle: '3D Luxury Emblem & Trust Pillars' },
+    { num: 1.1, title: 'Global Traces', subtitle: '3D Translucent Globe & Telemetry' },
+    { num: 1.2, title: 'Flow of Funds', subtitle: 'Multi-Chain Sankey & Risk Alerts' },
+    { num: 1.3, title: 'Bigger Picture', subtitle: 'Behavior Insights & Threat Radar' },
     { num: 2, title: 'Home Dashboard', subtitle: 'Global Metrics & Recent List' },
-    { num: 3, title: 'Investigate Anything', subtitle: 'Address Search & QR Scanner' },
+    { num: 3, title: 'Investigate Anything', subtitle: 'Address Search & Forensics Filter' },
     { num: 4, title: 'Analysing Evidence', subtitle: '8-Stage Forensic Pipeline' },
     { num: 5, title: 'Investigation Result', subtitle: 'Risk Score & Flagged Reasons' },
     { num: 6, title: 'Risk Analysis', subtitle: 'Radial Gauge & Signal Bars' },
@@ -88,19 +103,22 @@ export default function App() {
     { num: 8, title: 'Transaction Flow', subtitle: 'Radial Sankey Node Ribbons' },
     { num: 9, title: 'Address Details', subtitle: 'Balance Sparkline & Analytics' },
     { num: 10, title: 'Detected Patterns', subtitle: 'Peeling Chains & Burst Activity' },
-    { num: 11, title: 'Network Graph', subtitle: 'Interactive Cluster Topology' },
+    { num: 11, title: 'Graph Analysis', subtitle: 'Visualize Connections Topology' },
     { num: 12, title: 'AI Investigator', subtitle: 'Autonomous AI Forensic Chat' },
+    { num: 13, title: 'Risk Alerts Feed', subtitle: 'Stay Ahead of Risk Monitoring' },
+    { num: 14, title: 'Forensics Toolbox', subtitle: 'Powerful Forensic Tools Grid' },
   ];
 
   const isNative = typeof window !== 'undefined' && window.Capacitor && window.Capacitor.isNativePlatform ? window.Capacitor.isNativePlatform() : false;
 
   if (isNative) {
-    const hasBottomNav = [2, 3, 6, 11].includes(currentScreen);
+    const hasBottomNav = [2, 3, 11, 13, 14].includes(currentScreen);
+    const isSplash = [1, 1.1, 1.2, 1.3].includes(currentScreen);
     return (
       <div className="native-app-container" style={{ width: '100vw', height: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg-app)', position: 'relative', overflow: 'hidden' }}>
         <div
-          className={`screen-viewport ${!hasBottomNav ? 'no-bottom-nav' : ''} ${currentScreen === 1 ? 'is-splash' : ''}`}
-          style={{ flex: 1, paddingTop: currentScreen === 1 ? '0' : '10px' }}
+          className={`screen-viewport ${!hasBottomNav ? 'no-bottom-nav' : ''} ${isSplash ? 'is-splash' : ''}`}
+          style={{ flex: 1, paddingTop: isSplash ? '0' : '10px' }}
         >
           {renderScreenContent(currentScreen)}
         </div>

@@ -1,239 +1,457 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Share2, ZoomIn, ZoomOut, Compass, Layers, RotateCcw } from 'lucide-react';
+import {
+  Search,
+  Bell,
+  ArrowLeft,
+  Download,
+  MoreHorizontal,
+  ChevronDown,
+  Maximize2,
+  Plus,
+  Minus,
+  Layers,
+  Crosshair,
+  Copy,
+  ArrowRight,
+  Share2,
+  ArrowUpRight,
+  ArrowDownRight,
+  ShieldAlert,
+  Wallet,
+  Building,
+  RefreshCw
+} from 'lucide-react';
+import '../dashboard_screens.css';
 
 export default function Screen11_NetworkGraph({ onNavigate }) {
-  const [activeFilter, setActiveFilter] = useState('All');
+  const [viewMode, setViewMode] = useState('Graph View');
+  const [subTab, setSubTab] = useState('Overview');
   const [zoomLevel, setZoomLevel] = useState(1);
-  const [selectedNode, setSelectedNode] = useState(null);
+  const [copied, setCopied] = useState(false);
+  const [selectedNode, setSelectedNode] = useState('0x7a3...9f2c');
 
-  const filters = ['All', 'Wallets', 'Transactions', 'IPs'];
-
-  const nodes = [
-    { id: 'center', label: 'BTC Core', type: 'center', x: 180, y: 170, color: '#f7931a', radius: 24 },
-    { id: 'n1', label: '0x7a3f...d2e4', type: 'wallet', risk: 'high', x: 270, y: 110, color: '#ef4444', radius: 16 },
-    { id: 'n2', label: '4c3a...6a2c', type: 'tx', risk: 'suspicious', x: 90, y: 120, color: '#f59e0b', radius: 15 },
-    { id: 'n3', label: 'Binance Pool', type: 'exchange', risk: 'normal', x: 190, y: 60, color: '#3b82f6', radius: 18 },
-    { id: 'n4', label: 'Dark Cluster #3', type: 'wallet', risk: 'high', x: 100, y: 240, color: '#ef4444', radius: 16 },
-    { id: 'n5', label: '0x2a1...9c3f', type: 'wallet', risk: 'normal', x: 260, y: 250, color: '#06b6d4', radius: 15 },
-    { id: 'n6', label: '192.168.1.1', type: 'ip', risk: 'unknown', x: 290, y: 190, color: '#94a3b8', radius: 13 },
-    { id: 'n7', label: 'Coinbase OTC', type: 'exchange', risk: 'normal', x: 70, y: 180, color: '#3b82f6', radius: 15 },
-  ];
-
-  const edges = [
-    { from: 'center', to: 'n1', color: '#ef4444' },
-    { from: 'center', to: 'n2', color: '#f59e0b' },
-    { from: 'center', to: 'n3', color: '#3b82f6' },
-    { from: 'center', to: 'n4', color: '#ef4444' },
-    { from: 'center', to: 'n5', color: '#06b6d4' },
-    { from: 'n1', to: 'n6', color: '#94a3b8' },
-    { from: 'n2', to: 'n7', color: '#3b82f6' },
-  ];
+  const handleCopy = () => {
+    navigator.clipboard?.writeText('0x7a3f82b1c4e9d0234a56b7890123456789abcdef');
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1800);
+  };
 
   const handleZoom = (delta) => {
-    setZoomLevel((prev) => Math.max(0.7, Math.min(1.8, prev + delta)));
+    setZoomLevel((prev) => Math.max(0.7, Math.min(1.6, prev + delta)));
   };
 
   return (
-    <div className="screen-network-graph">
-      {/* Header */}
-      <div className="screen-header" style={{ padding: '0 0 4px 0' }}>
-        <button className="header-icon-btn" onClick={() => onNavigate(5)}>
-          <ArrowLeft size={18} />
-        </button>
-        <span className="header-title">Network Graph</span>
-        <button className="header-icon-btn">
-          <Share2 size={16} />
-        </button>
+    <div className="main-screen-container">
+      {/* Ambient Glows */}
+      <div className="ambient-pink-top" />
+      <div className="ambient-cyan-top" />
+
+      {/* Brand Header */}
+      <div className="brand-top-nav">
+        <div className="brand-nav-left" onClick={() => onNavigate(2)}>
+          <img
+            src="/assets/nexchain_app_icon_1024.png"
+            alt="NexChain"
+            className="brand-logo-icon"
+          />
+          <div className="brand-title-stack">
+            <span className="brand-main-title">NexChain</span>
+            <span className="brand-sub-badge">INTELLIGENCE IN MOTION</span>
+          </div>
+        </div>
+
+        <div className="brand-nav-right">
+          <button className="nav-icon-circle-btn" onClick={() => onNavigate(3)} title="Search">
+            <Search size={15} />
+          </button>
+          <button className="nav-icon-circle-btn" onClick={() => onNavigate(13)} title="Alerts">
+            <Bell size={15} />
+            <span className="notification-badge-red" />
+          </button>
+          <div className="nav-avatar-pill" onClick={() => onNavigate(15)}>
+            <span className="avatar-initials-text">AS</span>
+          </div>
+        </div>
       </div>
 
-      {/* Filter Pills */}
-      <div className="segmented-control" style={{ padding: '3px' }}>
-        {filters.map((f) => (
-          <button
-            key={f}
-            className={`segmented-btn ${activeFilter === f ? 'active' : ''}`}
-            onClick={() => setActiveFilter(f)}
+      {/* Back to Graph Analysis Sub-bar & Editorial Hero */}
+      <div className="hero-editorial-row" style={{ marginTop: '2px', marginBottom: '8px' }}>
+        <div className="hero-text-col">
+          <div
+            onClick={() => onNavigate(3)}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '4px',
+              fontSize: '11px',
+              fontWeight: '600',
+              color: '#334155',
+              cursor: 'pointer',
+              marginBottom: '6px'
+            }}
           >
-            {f}
-          </button>
-        ))}
+            <ArrowLeft size={13} />
+            <span>Graph Analysis</span>
+          </div>
+          <h1 className="hero-editorial-title" style={{ fontSize: '26px' }}>
+            Visualize<br />Connections.
+          </h1>
+          <p className="hero-editorial-desc" style={{ fontSize: '11px', maxWidth: '240px' }}>
+            Uncover relationships, trace fund flows, and identify hidden networks.
+          </p>
+        </div>
+
+        <div className="hero-visual-col" style={{ width: '130px', height: '130px' }}>
+          <div className="hero-side-micro-text">
+            FROM<br />DATA<br />TO<br />JUSTICE
+          </div>
+          <img
+            src="/assets/nexchain_graph_cubes.png"
+            alt="Graph Cubes 3D"
+            className="hero-3d-img"
+          />
+        </div>
       </div>
 
-      {/* Network Graph Interactive Canvas */}
-      <div className="network-graph-viewport">
-        {/* Floating Controls */}
-        <div className="network-toolbox">
-          <button className="network-tool-btn" onClick={() => handleZoom(0.15)} title="Zoom In">
-            <ZoomIn size={16} />
+      {/* Segmented View Toggle & Action Buttons Bar */}
+      <div className="graph-action-bar">
+        <div className="segmented-toggle-wrap">
+          <button
+            className={`segment-btn ${viewMode === 'Graph View' ? 'active' : ''}`}
+            onClick={() => setViewMode('Graph View')}
+          >
+            Graph View
           </button>
-          <button className="network-tool-btn" onClick={() => handleZoom(-0.15)} title="Zoom Out">
-            <ZoomOut size={16} />
-          </button>
-          <button className="network-tool-btn" onClick={() => setZoomLevel(1)} title="Recenter">
-            <Compass size={16} />
-          </button>
-          <button className="network-tool-btn" onClick={() => onNavigate(8)} title="View Tx Flow">
-            <Layers size={16} />
+          <button
+            className={`segment-btn ${viewMode === 'List View' ? 'active' : ''}`}
+            onClick={() => setViewMode('List View')}
+          >
+            List View
           </button>
         </div>
 
-        {/* SVG Network Graph */}
-        <svg
-          width="100%"
-          height="100%"
-          viewBox="0 0 360 320"
-          style={{
-            transform: `scale(${zoomLevel})`,
-            transformOrigin: 'center center',
-            transition: 'transform 0.25s ease'
-          }}
-        >
-          {/* Subtle Cyber Grid */}
-          <pattern id="netGrid" width="24" height="24" patternUnits="userSpaceOnUse">
-            <circle cx="2" cy="2" r="1" fill="#e2e8f0" />
-          </pattern>
-          <rect width="100%" height="100%" fill="url(#netGrid)" />
+        <div className="graph-top-buttons">
+          <button className="icon-text-btn" onClick={() => onNavigate(8)}>
+            <Download size={12} />
+            <span>Export</span>
+          </button>
+          <button className="icon-text-btn" style={{ padding: '5px 8px' }}>
+            <MoreHorizontal size={14} />
+          </button>
+        </div>
+      </div>
 
-          {/* Edges */}
-          {edges.map((e, idx) => {
-            const fNode = nodes.find((n) => n.id === e.from);
-            const tNode = nodes.find((n) => n.id === e.to);
-            if (!fNode || !tNode) return null;
-            return (
-              <line
-                key={idx}
-                x1={fNode.x}
-                y1={fNode.y}
-                x2={tNode.x}
-                y2={tNode.y}
-                stroke={e.color}
-                strokeWidth="2.5"
-                strokeOpacity="0.6"
-                strokeDasharray={e.from === 'n1' ? '4 3' : 'none'}
-              />
-            );
-          })}
+      {/* Filter Dropdowns Bar */}
+      <div className="filter-dropdowns-bar" style={{ marginBottom: '10px' }}>
+        <div className="dropdown-chip">
+          <span style={{ color: '#ea580c', fontWeight: 'bold' }}>₿</span>
+          <span>BTC</span>
+          <ChevronDown size={11} color="#64748b" />
+        </div>
+        <div className="dropdown-chip">
+          <span>📅 Last 30 Days</span>
+          <ChevronDown size={11} color="#64748b" />
+        </div>
+        <div className="dropdown-chip">
+          <span>⬡ All Entities</span>
+          <ChevronDown size={11} color="#64748b" />
+        </div>
+      </div>
 
-          {/* Nodes */}
-          {nodes.map((node) => {
-            const isSelected = selectedNode === node.id;
-            return (
-              <g
-                key={node.id}
-                transform={`translate(${node.x}, ${node.y})`}
-                onClick={() => {
-                  setSelectedNode(node.id);
-                  if (node.id === 'n1') onNavigate(9);
-                }}
-                style={{ cursor: 'pointer' }}
-              >
-                {/* Glow ring on hover/selection */}
-                <circle
-                  r={node.radius + 6}
-                  fill={node.color}
-                  opacity={isSelected ? 0.35 : 0.12}
-                  className="animate-pulse"
-                />
-                <circle
-                  r={node.radius}
-                  fill="#ffffff"
-                  stroke={node.color}
-                  strokeWidth="2.5"
-                  filter="drop-shadow(0 4px 6px rgba(0,0,0,0.1))"
-                />
-                {node.id === 'center' ? (
-                  <text textAnchor="middle" y="5" fontSize="14" fontWeight="900" fill="#f7931a">₿</text>
-                ) : (
-                  <circle r={node.radius - 6} fill={node.color} opacity="0.8" />
-                )}
+      {/* 4 Key Metrics Stat Grid */}
+      <div className="metrics-stat-grid">
+        <div className="metric-stat-card">
+          <div className="metric-card-top">
+            <Share2 size={13} color="#2563eb" />
+          </div>
+          <span className="metric-value-huge">128</span>
+          <span className="metric-label-small">Total Nodes</span>
+          <span className="metric-trend-badge up">↑ 12%</span>
+        </div>
 
-                {/* Node Tag */}
-                <text
-                  textAnchor="middle"
-                  y={node.radius + 13}
-                  fontSize="8.5"
-                  fontFamily="var(--font-mono)"
-                  fontWeight="700"
-                  fill="#0f172a"
-                >
-                  {node.label}
-                </text>
-              </g>
-            );
-          })}
-        </svg>
+        <div className="metric-stat-card">
+          <div className="metric-card-top">
+            <RefreshCw size={13} color="#0284c7" />
+          </div>
+          <span className="metric-value-huge">342</span>
+          <span className="metric-label-small">Total Transactions</span>
+          <span className="metric-trend-badge up">↑ 18%</span>
+        </div>
 
-        {/* Selected Node Drawer Hint */}
-        {selectedNode && (
-          <div style={{
-            position: 'absolute',
-            bottom: 10,
-            left: 10,
-            right: 10,
-            background: 'rgba(255,255,255,0.95)',
-            backdropFilter: 'blur(10px)',
-            borderRadius: '12px',
-            padding: '8px 12px',
-            border: '1px solid #cbd5e1',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            fontSize: '11px'
-          }}>
-            <span>Selected: <b>{nodes.find(n => n.id === selectedNode)?.label}</b></span>
-            <button
-              onClick={() => onNavigate(9)}
-              style={{
-                border: 'none',
-                background: '#2563eb',
-                color: 'white',
-                padding: '4px 8px',
-                borderRadius: '6px',
-                fontSize: '10px',
-                fontWeight: 700,
-                cursor: 'pointer'
-              }}
-            >
-              Inspect →
+        <div className="metric-stat-card">
+          <div className="metric-card-top">
+            <ShieldAlert size={13} color="#ef4444" />
+          </div>
+          <span className="metric-value-huge">5</span>
+          <span className="metric-label-small">High-Risk Entities</span>
+          <span className="metric-trend-badge down">↓ 25%</span>
+        </div>
+
+        <div className="metric-stat-card">
+          <div className="metric-card-top">
+            <Layers size={13} color="#475569" />
+          </div>
+          <span className="metric-value-huge">$2.4M</span>
+          <span className="metric-label-small">Total Volume</span>
+          <span className="metric-trend-badge up">↑ 42%</span>
+        </div>
+      </div>
+
+      {/* Interactive Transaction Graph Card */}
+      <div className="graph-canvas-card">
+        <div className="graph-card-header-bar">
+          <div>
+            <h3 style={{ margin: 0, fontSize: '13px', fontWeight: 700, color: '#0f172a' }}>
+              Transaction Graph
+            </h3>
+            <p style={{ margin: '2px 0 0 0', fontSize: '9px', color: '#64748b' }}>
+              Interactive visualization of on-chain relationships.
+            </p>
+          </div>
+          <button
+            className="icon-text-btn"
+            style={{ padding: '4px 8px', fontSize: '9.5px' }}
+            onClick={() => handleZoom(0.1)}
+          >
+            <Maximize2 size={11} />
+            <span>Full Screen</span>
+          </button>
+        </div>
+
+        {/* SVG Interactive Canvas */}
+        <div className="graph-canvas-area">
+          <svg
+            viewBox="0 0 360 220"
+            style={{
+              width: '100%',
+              height: '100%',
+              transform: `scale(${zoomLevel})`,
+              transition: 'transform 0.3s ease'
+            }}
+          >
+            <defs>
+              <radialGradient id="centerGlow" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.35" />
+                <stop offset="100%" stopColor="#3b82f6" stopOpacity="0" />
+              </radialGradient>
+              <radialGradient id="highRiskGlow" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stopColor="#ef4444" stopOpacity="0.4" />
+                <stop offset="100%" stopColor="#ef4444" stopOpacity="0" />
+              </radialGradient>
+              <filter id="shadowFilter" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="2" stdDeviation="3" floodOpacity="0.15" />
+              </filter>
+            </defs>
+
+            {/* Glowing Rings for Center & High-Risk */}
+            <circle cx="175" cy="115" r="36" fill="url(#centerGlow)" />
+            <circle cx="245" cy="115" r="28" fill="url(#highRiskGlow)" />
+
+            {/* Edges / Lines connecting nodes */}
+            <g stroke="rgba(148, 163, 184, 0.45)" strokeWidth="1.2" strokeDasharray="2,2">
+              <line x1="175" y1="115" x2="125" y2="100" />
+              <line x1="175" y1="115" x2="195" y2="55" />
+              <line x1="175" y1="115" x2="245" y2="115" />
+              <line x1="175" y1="115" x2="290" y2="125" />
+              <line x1="175" y1="115" x2="260" y2="175" />
+              <line x1="175" y1="115" x2="110" y2="185" />
+              <line x1="175" y1="115" x2="105" y2="135" />
+              <line x1="105" y1="135" x2="55" y2="125" />
+            </g>
+
+            {/* Animated Stream Pulses (Dots moving along lines) */}
+            <circle cx="150" cy="108" r="2" fill="#3b82f6" />
+            <circle cx="210" cy="115" r="2" fill="#ef4444" />
+            <circle cx="185" cy="85" r="2" fill="#64748b" />
+            <circle cx="218" cy="145" r="2" fill="#8b5cf6" />
+            <circle cx="142" cy="150" r="2" fill="#ea580c" />
+
+            {/* Leftmost Node (0x4b2...1c9d) */}
+            <g transform="translate(55, 125)" filter="url(#shadowFilter)" style={{ cursor: 'pointer' }}>
+              <circle cx="0" cy="0" r="10" fill="#f1f5f9" stroke="#cbd5e1" strokeWidth="1.5" />
+              <text x="0" y="3" fontSize="8" textAnchor="middle" fill="#475569">📁</text>
+              <text x="0" y="16" fontSize="6.5" textAnchor="middle" fill="#64748b" fontFamily="JetBrains Mono">0x4b2...1c9d</text>
+            </g>
+
+            {/* Bank / Institution Node */}
+            <g transform="translate(105" y="135)" filter="url(#shadowFilter)" style={{ cursor: 'pointer' }}>
+              <circle cx="105" cy="135" r="13" fill="#fee2e2" stroke="#f87171" strokeWidth="1.5" />
+              <text x="105" y="139" fontSize="10" textAnchor="middle" fill="#b91c1c">🏛️</text>
+            </g>
+
+            {/* BTC Top Left Node */}
+            <g filter="url(#shadowFilter)" style={{ cursor: 'pointer' }}>
+              <circle cx="125" cy="100" r="13" fill="#ffedd5" stroke="#fb923c" strokeWidth="1.5" />
+              <text x="125" y="104" fontSize="10" textAnchor="middle" fill="#c2410c" fontWeight="bold">₿</text>
+            </g>
+
+            {/* Node Top (0x9d1...8e3f) */}
+            <g transform="translate(195, 55)" filter="url(#shadowFilter)" style={{ cursor: 'pointer' }}>
+              <circle cx="0" cy="0" r="10" fill="#f1f5f9" stroke="#cbd5e1" strokeWidth="1.5" />
+              <text x="0" y="3" fontSize="8" textAnchor="middle" fill="#475569">📁</text>
+              <text x="0" y="16" fontSize="6.5" textAnchor="middle" fill="#64748b" fontFamily="JetBrains Mono">0x9d1...8e3f</text>
+            </g>
+
+            {/* Center Master Wallet Node (0x7a3...9f2c) */}
+            <g transform="translate(175, 115)" filter="url(#shadowFilter)" style={{ cursor: 'pointer' }}>
+              <circle cx="0" cy="0" r="17" fill="#1e293b" stroke="#60a5fa" strokeWidth="2.5" />
+              <text x="0" y="4" fontSize="10" textAnchor="middle" fill="#ffffff">💼</text>
+              <text x="0" y="24" fontSize="7.5" textAnchor="middle" fill="#0f172a" fontWeight="bold" fontFamily="JetBrains Mono">0x7a3...9f2c</text>
+            </g>
+
+            {/* Red High-Risk BTC Node */}
+            <g filter="url(#shadowFilter)" style={{ cursor: 'pointer' }}>
+              <circle cx="245" cy="115" r="14" fill="#fee2e2" stroke="#ef4444" strokeWidth="2" />
+              <text x="245" y="119" fontSize="10" textAnchor="middle" fill="#dc2626" fontWeight="bold">₿</text>
+            </g>
+
+            {/* Purple Ethereum Node */}
+            <g filter="url(#shadowFilter)" style={{ cursor: 'pointer' }}>
+              <circle cx="290" cy="125" r="12" fill="#ede9fe" stroke="#a78bfa" strokeWidth="1.5" />
+              <text x="290" y="129" fontSize="9" textAnchor="middle" fill="#6d28d9" fontWeight="bold">⟠</text>
+            </g>
+
+            {/* Bottom Right Node (0x6e1...5b7c) */}
+            <g transform="translate(260, 175)" filter="url(#shadowFilter)" style={{ cursor: 'pointer' }}>
+              <circle cx="0" cy="0" r="10" fill="#f1f5f9" stroke="#cbd5e1" strokeWidth="1.5" />
+              <text x="0" y="3" fontSize="8" textAnchor="middle" fill="#475569">📁</text>
+              <text x="0" y="16" fontSize="6.5" textAnchor="middle" fill="#64748b" fontFamily="JetBrains Mono">0x6e1...5b7c</text>
+            </g>
+
+            {/* Bottom Left Node (0x8f4...3d2e) */}
+            <g transform="translate(110, 185)" filter="url(#shadowFilter)" style={{ cursor: 'pointer' }}>
+              <circle cx="0" cy="0" r="10" fill="#f1f5f9" stroke="#cbd5e1" strokeWidth="1.5" />
+              <text x="0" y="3" fontSize="8" textAnchor="middle" fill="#475569">📁</text>
+              <text x="0" y="16" fontSize="6.5" textAnchor="middle" fill="#64748b" fontFamily="JetBrains Mono">0x8f4...3d2e</text>
+            </g>
+          </svg>
+
+          {/* Floating Canvas Control Toolbar */}
+          <div className="graph-toolbar-floating">
+            <button className="toolbar-btn" onClick={() => handleZoom(0.15)} title="Zoom In">
+              <Plus size={13} />
+            </button>
+            <button className="toolbar-btn" onClick={() => handleZoom(-0.15)} title="Zoom Out">
+              <Minus size={13} />
+            </button>
+            <button className="toolbar-btn" onClick={() => setZoomLevel(1)} title="Reset Scale">
+              <Maximize2 size={12} />
+            </button>
+            <button className="toolbar-btn" title="Toggle Layers">
+              <Layers size={12} />
+            </button>
+            <button className="toolbar-btn" title="Center Focus">
+              <Crosshair size={12} />
             </button>
           </div>
-        )}
+        </div>
+
+        {/* Legend Row below Graph */}
+        <div className="graph-legend-row">
+          <div className="legend-item">
+            <span className="legend-dot exchange" />
+            <span>Exchange</span>
+          </div>
+          <div className="legend-item">
+            <span className="legend-dot mixer" />
+            <span>Mixer</span>
+          </div>
+          <div className="legend-item">
+            <span className="legend-dot wallet" />
+            <span>Wallet</span>
+          </div>
+          <div className="legend-item">
+            <span className="legend-dot contract" />
+            <span>Contract</span>
+          </div>
+          <div className="legend-item">
+            <span className="legend-dot highrisk" />
+            <span>High Risk</span>
+          </div>
+        </div>
       </div>
 
-      {/* Footer Metrics Status Bar */}
-      <div className="network-footer-stats">
-        <div className="net-stat-item">
-          <span className="net-stat-val">47</span>
-          <span className="net-stat-lbl">Entities</span>
-        </div>
-        <div className="net-stat-item">
-          <span className="net-stat-val">3</span>
-          <span className="net-stat-lbl">Clusters</span>
-        </div>
-        <div className="net-stat-item">
-          <span className="net-stat-val" style={{ color: '#ef4444' }}>1</span>
-          <span className="net-stat-lbl">High Risk</span>
-        </div>
-        <div className="net-stat-item">
-          <span className="net-stat-val" style={{ color: '#2563eb' }}>2</span>
-          <span className="net-stat-lbl">Exchanges</span>
-        </div>
-      </div>
+      {/* Selected Entity Dossier Card */}
+      <div className="entity-dossier-card">
+        <div className="dossier-header-bar">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div
+              style={{
+                width: '26px',
+                height: '26px',
+                borderRadius: '50%',
+                background: '#ede9fe',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '13px',
+                color: '#6d28d9',
+                fontWeight: 'bold'
+              }}
+            >
+              ⟠
+            </div>
+            <span style={{ fontFamily: 'JetBrains Mono', fontSize: '11px', fontWeight: 700, color: '#0f172a' }}>
+              0x7a3...9f2c
+            </span>
+            <button
+              onClick={handleCopy}
+              style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', padding: 0 }}
+              title="Copy Address"
+            >
+              <Copy size={11} />
+            </button>
+            <span className="risk-tag-badge high" style={{ fontSize: '8.5px', padding: '2px 6px' }}>
+              High Risk
+            </span>
+          </div>
 
-      {/* Legend */}
-      <div className="flow-legend-row" style={{ padding: '0 4px' }}>
-        <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-          <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#ef4444' }} /> High Risk
-        </span>
-        <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-          <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#f59e0b' }} /> Suspicious
-        </span>
-        <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-          <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#06b6d4' }} /> Normal
-        </span>
-        <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-          <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#94a3b8' }} /> Unknown
-        </span>
+          <button
+            className="icon-text-btn"
+            style={{ fontSize: '10px', padding: '4px 10px', color: '#1e293b', fontWeight: 'bold' }}
+            onClick={() => onNavigate(5)}
+          >
+            <span>View Details</span>
+            <ArrowRight size={12} />
+          </button>
+        </div>
+
+        {/* Sub-Tabs: Overview, Transactions, Connections, Risk Analysis */}
+        <div className="dossier-sub-tabs">
+          {['Overview', 'Transactions', 'Connections', 'Risk Analysis'].map((tab) => (
+            <button
+              key={tab}
+              className={`dossier-tab-btn ${subTab === tab ? 'active' : ''}`}
+              onClick={() => setSubTab(tab)}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
+
+        {/* 4 Inflow / Outflow / Tx / Entity Stats */}
+        <div className="dossier-stat-grid">
+          <div className="dossier-stat-tile">
+            <span style={{ fontSize: '10px', color: '#0284c7' }}>⇄</span>
+            <span className="dossier-stat-num">$843,220</span>
+            <span className="dossier-stat-lbl">Total Inflow</span>
+          </div>
+          <div className="dossier-stat-tile">
+            <span style={{ fontSize: '10px', color: '#ea580c' }}>⤸</span>
+            <span className="dossier-stat-num">$791,430</span>
+            <span className="dossier-stat-lbl">Total Outflow</span>
+          </div>
+          <div className="dossier-stat-tile">
+            <span style={{ fontSize: '10px', color: '#3b82f6' }}>⇄</span>
+            <span className="dossier-stat-num">56</span>
+            <span className="dossier-stat-lbl">Transactions</span>
+          </div>
+          <div className="dossier-stat-tile">
+            <span style={{ fontSize: '10px', color: '#8b5cf6' }}>👥</span>
+            <span className="dossier-stat-num">3</span>
+            <span className="dossier-stat-lbl">Connected Entities</span>
+          </div>
+        </div>
       </div>
     </div>
   );

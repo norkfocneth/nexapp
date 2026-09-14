@@ -1,60 +1,59 @@
-import React from 'react';
-import { Shield, ArrowRight } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import '../onboarding.css';
 
-export default function Screen01_Splash({ onNavigate }) {
+import Screen_Welcome from './onboarding/Screen_Welcome';
+import Screen_GlobalTraces from './onboarding/Screen_GlobalTraces';
+import Screen_FlowOfFunds from './onboarding/Screen_FlowOfFunds';
+import Screen_BiggerPicture from './onboarding/Screen_BiggerPicture';
+
+export default function Screen01_Splash({ onNavigate, initialStep = 0 }) {
+  const [step, setStep] = useState(initialStep);
+
+  useEffect(() => {
+    setStep(initialStep);
+  }, [initialStep]);
+
+  const handleSkip = () => {
+    onNavigate(2); // Navigate to Home Dashboard
+  };
+
+  const handleFinish = () => {
+    onNavigate(2); // Navigate to Home Dashboard
+  };
+
   return (
-    <div className="screen-splash">
-      {/* Full-Screen Minimalist Pink-Cyan Bitcoin Background */}
-      <img
-        src="/assets/nexchain_splash_bg.jpg"
-        alt="NexChain Bitcoin Minimalist Background"
-        className="splash-bg-cover"
-      />
-      <div className="splash-bg-overlay" />
-
-      {/* Top Brand Info */}
-      <div className="splash-header">
-        <div className="splash-logo-shield animate-float">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M12 2L2 7l10 5 10-5-10-5z" />
-            <path d="M2 17l10 5 10-5" />
-            <path d="M2 12l10 5 10-5" />
-          </svg>
-        </div>
-        <h1 className="splash-title">NexChain</h1>
-        <p className="splash-subtitle">
-          Blockchain Intelligence<br />for a Safer Tomorrow
-        </p>
-      </div>
-
-      {/* Open Center Spacer showcasing the Bitcoin centerpiece */}
-      <div className="splash-center-spacer" />
-
-      {/* Bottom CTA Area */}
-      <div className="splash-bottom-actions">
-        <div className="splash-tagline-pills">
-          <span>TRACE</span>
-          <span className="dot" />
-          <span>ANALYZE</span>
-          <span className="dot" />
-          <span>PROTECT</span>
-        </div>
-
-        <button
-          className="btn-get-started"
-          onClick={() => onNavigate(2)}
-          id="btn-get-started"
-        >
-          <span>Get Started</span>
-          <ArrowRight size={18} strokeWidth={2.5} />
-        </button>
-
-        <div className="splash-trust-text">
-          <Shield size={13} color="#38bdf8" />
-          <span>Trusted by investigators worldwide.</span>
-        </div>
-      </div>
+    <div style={{ width: '100%', height: '100%', position: 'relative' }}>
+      {step === 0 && (
+        <Screen_Welcome
+          onNext={() => setStep(1)}
+          onSkip={handleSkip}
+          onSelectStep={setStep}
+        />
+      )}
+      {step === 1 && (
+        <Screen_GlobalTraces
+          onNext={() => setStep(2)}
+          onBack={() => setStep(0)}
+          onSkip={handleSkip}
+          onSelectStep={setStep}
+        />
+      )}
+      {step === 2 && (
+        <Screen_FlowOfFunds
+          onNext={() => setStep(3)}
+          onBack={() => setStep(1)}
+          onSkip={handleSkip}
+          onSelectStep={setStep}
+        />
+      )}
+      {step === 3 && (
+        <Screen_BiggerPicture
+          onNext={handleFinish}
+          onBack={() => setStep(2)}
+          onSkip={handleSkip}
+          onSelectStep={setStep}
+        />
+      )}
     </div>
   );
 }
-

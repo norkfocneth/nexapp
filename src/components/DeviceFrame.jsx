@@ -11,12 +11,12 @@ export default function DeviceFrame({
   riskScore = 72,
   showBottomNav = true,
 }) {
-  // Check if current screen has dark background (Splash screen 1 or Network graph 11)
-  const isLightText = currentScreen === 1 || currentScreen === 11;
-  const isSplash = currentScreen === 1;
+  // Luxury ivory background on all main screens, dark status bar text
+  const isLightText = false;
+  const isSplash = [1, 1.1, 1.2, 1.3].includes(currentScreen);
 
-  // Screens that show bottom nav: 2 (Home), 3 (Investigate), 6 (Risk Analysis), 11 (Network Graph)
-  const hasBottomNav = showBottomNav && [2, 3, 6, 11].includes(currentScreen);
+  // Screens that show bottom nav: 2 (Home), 3 (Investigate), 11 (Network Graph), 13 (Alerts), 14 (Tools)
+  const hasBottomNav = showBottomNav && [2, 3, 11, 13, 14].includes(currentScreen);
 
   return (
     <div className="iphone-chassis">
